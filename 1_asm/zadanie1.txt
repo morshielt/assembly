@@ -31,9 +31,12 @@ spełnione są wszystkie następujące warunki:
 
 Program niczego nie wypisuje. Program kończy się kodem (ang. exit code) 0, jeśli
 podany plik zawiera sygnał do ataku, a 1 w przeciwnym przypadku. Program kończy
-się kodem 1 również wtedy, gdy wystąpił jakiś błąd, np. podano złą liczbę
-argumentów, podany argument jest niepoprawny, plik o podanej nazwie nie
-istnieje, plik ma złą długość, wystąpił błąd operacji odczytu pliku itp.
+się kodem 1 również wtedy, gdy wystąpił jakiś błąd, np.
+podano złą liczbę argumentów,
+podany argument jest niepoprawny,
+plik o podanej nazwie nie istnieje,
+plik ma złą długość,
+wystąpił błąd operacji odczytu pliku itp.
 
 Tekst źródłowy programu należy umieścić w pliku attack.asm w repozytorium SVN
 w katalogu https://svn.mimuw.edu.pl/repos/SO/studenci/login/zadanie1, gdzie
