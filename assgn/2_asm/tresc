@@ -1,3 +1,12 @@
+SYNCHRO:
+euron(thread!) n:
+1. while (arr[n] != -1) {}
+2. val[n] = top
+3. arr[n] = m
+4. while (arr[m] != n) {}
+5. push val[m]
+6. arr[m] = -1
+
 INGA TIP:
     lock\ jest fo jednej instrukcji tylko
     xchng jest atomowe samo z siebie! nie potrzebuje locka! (to check)
