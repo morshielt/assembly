@@ -126,7 +126,7 @@ wirującej blokady. Rozwiązanie będzie asemblowane na maszynie students
 poleceniem:
 
 nasm -DN=XXX -f elf64 -o euron.o euron.asm
-
+// moralnie %define M XXX
 gdzie XXX określa wartość parametru N.
 
 Tekst źródłowy rozwiązania należy umieścić w pliku euron.asm w repozytorium SVN
