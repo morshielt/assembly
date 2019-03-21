@@ -2,13 +2,14 @@ BUFFER_LEN equ 8192
 SPECIAL_NUMBER equ 68020
 MOD equ 4 ; file has wrong length if (length % 4 != 0)
 
+%define ONE ebx ; = 1, used to reset counter or set variable to 'true', for cmov use
 %define fd r8 ; file descriptor
 %define i r9 ; 'iterator' over numbers in current buffer
 %define bytes_read r10 ; how many bytes were read by sys_read
 %define curr r15d ; current number from buffer
-%define found_number_between r12b ; 1 if already read x: 68020 < x < 2^31
-%define position_in_seq r13 ; current position in SEQUENCE
-%define sum r14d ; (sum of all numbers from file) % 2^32 (32-bit register)
+%define found_number_between r12d ; 1 if already read x satisfying 68020 < x < 2^31
+%define position_in_seq r13d ; current position in SEQUENCE
+%define sum r14d ; (sum of all numbers from file) % 2^32 (guaranteed by 32-bit register)
 
 section .rodata
     SEQUENCE dd 6, 8, 0, 2, 0 ; attack sequence
@@ -22,6 +23,7 @@ section .text
 ; initialization of registers
 _start:
     xor fd, fd
+    mov ONE, 1
     xor i, i
     xor bytes_read, bytes_read
     xor curr, curr
@@ -40,14 +42,14 @@ _check_argc:
 ; attempt to open file
 _open:
     mov rax, 2 ; sys_open
-    lea rdi, [rbp+16] ; argv[1] (filename) from stack
+    lea rdi, [rbp + 16] ; argv[1] (filename) from stack
     mov rdi, [rdi]
     mov rsi, 0 ; 0 = O_RDONLY
     mov rdx, 0 ; NO MODE
     syscall
 
     mov fd, rax ; save file descriptor
-    test fd, fd
+    test fd, fd ; check if returned file descriptor >= 0
     js _no_attack
 
 ; attempt to read from file
@@ -59,10 +61,9 @@ _read:
     syscall
 
     mov bytes_read, rax
-    cmp bytes_read, 0
-    ja _process_buffer
-    je _final_check ; read EOF
-    jmp _no_attack ; read error
+    test bytes_read, bytes_read
+    jz _final_check ; EOF
+    js _no_attack ; read error
 
 ; process portion of numbers from file
 _process_buffer:
@@ -82,15 +83,8 @@ _process_curr:
 _special_number:
     cmp curr, SPECIAL_NUMBER
     je _no_attack
-
-; check if (68020 < curr < 2^31)
-_between_special_and_2_31:
-    test found_number_between, found_number_between
-    jne _attack_sequence ; already found, no need to check
-
-    cmp curr, SPECIAL_NUMBER
-    jle _attack_sequence ; signed (curr <= 68020), next
-    mov found_number_between, 1 ; number found, set 'true'
+    ; also check if (68020 < curr < 2^31)
+    cmovg found_number_between, ONE ; if between, set found_number_between to 'true'
 
 _attack_sequence:
     cmp position_in_seq, 5
@@ -106,8 +100,7 @@ _attack_sequence:
 _check_start:
     xor position_in_seq, position_in_seq ; reset position_in_seq
     cmp curr, [SEQUENCE]
-    jne _sum
-    inc position_in_seq
+    cmove position_in_seq, ONE ; new sequence starts, set counter to 1
 
 ; add current number to sum (mod 2^32 guaranteed by 32-bit register)
 _sum:
@@ -117,12 +110,12 @@ _sum:
 _next_action:
     add i, MOD
     cmp i, bytes_read
-    je _read ; already read whole buffer
+    je _read ; already read whole buffer, read next bytes
     jmp _process_curr ; reading next number from buffer
 
 ; check if all conditions for attack were satisfied
 _final_check:
-    cmp found_number_between, 1 ; check if number between 68020 and 2^32 was present
+    cmp found_number_between, ONE ; check if number between 68020 and 2^32 was present
     jne _no_attack
     cmp position_in_seq, 5 ; check if whole sequence was present
     jne _no_attack
