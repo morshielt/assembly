@@ -9,6 +9,7 @@ euron n:
 7. arr[m] = -1
 
 euron n:
+
 1. while (arr[n][m] != -1) {}
 2. val[n][m] = top
 3. arr[n][m] = m

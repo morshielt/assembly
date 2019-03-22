@@ -19,7 +19,7 @@ uint64_t euron(uint64_t n, char const *prog); //{
 
 void *euron_wrapper(void *vargs) {
     arg_struct *args = (arg_struct *) vargs;
-    printf("wrapping euron %lu\n", args->n);
+//    printf("wrapping euron %lu\n", args->n);
     pthread_exit((void *) (uint64_t) euron(args->n, args->prog));
 }
 
@@ -35,6 +35,9 @@ void put_value(uint64_t n, uint64_t v) {
 
 int main() {
     char const *prog = "01234n+P56789E-+D+*G*1n-+S2ED+E1-+75+-BC";
+//    char const *prog = "n";
+
+    printf("\n");
     pthread_t th[N];
     pthread_attr_t attr;
     uint64_t i;
@@ -53,18 +56,15 @@ int main() {
 }
 
 void stack_dump(int a, int b, int c, int d, int e, int f, int g, int h, int i) {
-    printf("Stack top:\n · %d\n · %d\n · %d\n · %d\n · %d\n · %d\n · %d\n · %d\n · %d\n",
+    printf("Stack top: · %d · %d · %d · %d · %d · %d · %d · %d · %d\n",
            a, b, c, d, e, f, g, h, i);
 }
 
-void
-register_dump(int rdi, int rsi, int rdx, int rcx,
-              int r8, int r9, int rax, int rbx,
-              int rbp, int rsp, int r10, int r11,
-              int r12, int r13, int r14, int r15) {
+void register_dump(int rdi, int rsi, int rdx, int rcx, int r8, int r9, int rax, int rbx,
+                   int rbp, int rsp, int r10, int r11, int r12, int r13, int r14, char *r15) {
     printf("rax = %d    rbx = %d    rcx = %d    rdx = %d\n"
            "rsi = %d    rdi = %d    rbp = %d    rsp = %d\n"
            "r8  = %d    r9  = %d    r10 = %d    r11 = %d\n"
-           "r12 = %d    r13 = %d    r14 = %d    r15 = %d\n",
+           "EURON_ID_n = %d    CURR  = %c    ITER = %d    PROG = %s\n",
            rax, rbx, rcx, rdx, rsi, rdi, rbp, rsp, r8, r9, r10, r11, r12, r13, r14, r15);
 }

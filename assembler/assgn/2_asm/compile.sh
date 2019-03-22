@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
-make
+make -B
 ./euron
 rm *.o
