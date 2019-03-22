@@ -1,11 +1,23 @@
 SYNCHRO:
-euron(thread!) n:
+euron n:
 1. while (arr[n] != -1) {}
 2. val[n] = top
 3. arr[n] = m
 4. while (arr[m] != n) {}
-5. push val[m]
-6. arr[m] = -1
+5. pop
+6. push val[m]
+7. arr[m] = -1
+
+euron n:
+1. while (arr[n][m] != -1) {}
+2. val[n][m] = top
+3. arr[n][m] = m
+4. while (arr[m][n] != n) {}
+5. pop
+6. push val[m][n]
+7. arr[m][n] = -1
+
+
 
 INGA TIP:
     lock\ jest fo jednej instrukcji tylko
@@ -46,10 +58,6 @@ na koniec:
     ret
 
 makefile (slajd 84) dodatkowo gcc '-pthread' trzeba flagę dodać!
-
-
-
-
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Zadanie 2
