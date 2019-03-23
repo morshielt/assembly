@@ -34,8 +34,8 @@ void put_value(uint64_t n, uint64_t v) {
 }
 
 int main() {
-    char const *prog = "01234n+P56789E-+D+*G*1n-+S2ED+E1-+75+-BC";
-//    char const *prog = "n";
+    char const *prog = "01234n+P56789E-+D+*G*1n-+S2ED+E1-+75+-BCn";
+//    char const *prog = "5n-+1n-+S";
 
     printf("\n");
     pthread_t th[N];

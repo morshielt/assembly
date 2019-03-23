@@ -1,21 +1,20 @@
 SYNCHRO:
 euron n:
 1. while (arr[n] != -1) {}
-2. val[n] = top
+2. val[n] = top //// to się popuje od razu
 3. arr[n] = m
 4. while (arr[m] != n) {}
-5. pop
+;; 5. pop
 6. push val[m]
 7. arr[m] = -1
 
 euron n:
-
 1. while (arr[n][m] != -1) {}
-2. val[n][m] = top
+2. val[n] = top
 3. arr[n][m] = m
 4. while (arr[m][n] != n) {}
 5. pop
-6. push val[m][n]
+6. push val[m]
 7. arr[m][n] = -1
 
 
