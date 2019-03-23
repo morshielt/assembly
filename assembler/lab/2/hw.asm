@@ -1,5 +1,8 @@
 %define i r15
+%define    prog r14     ; from argument
 %define    curr r13b    ; current symbol
+
+OSIEM equ 8
 section .bss
     jt resb 128
 
@@ -13,16 +16,34 @@ _start:
     mov rdx, msg_len
     syscall
 
-;    lea rax, [jt + 'x']
     mov rax, _exit2
-    mov rdi, 'x'
-    mov [jt + rdi], rax
+    mov rdi, '1'
+;    imul rdi, OSIEM
+    lea rdx, [jt + rdi]
+    mov [jt + rdi*8], rax
 
-    xor i, i
-    mov curr, 'x'
-    movsx r13, curr
+    mov rax, _exit3
+    mov rdi, '2'
+;    imul rdi, OSIEM
+    mov [jt + rdi*8], rax
 
-    add i, r13
+    mov rax, _exit4
+    mov rdi, '3'
+;    imul rdi, OSIEM
+    mov [jt + rdi*8], rax
+
+;    xor i, i
+    mov curr, '1'
+    movsx i, curr
+    jmp [jt + i*8]
+
+
+label:
+    mov curr, '2'
+    movsx i, curr
+    jmp [jt + i*8]
+
+;    add i, r13
 ;    sub i, 48 ; ASCII
 ;    mov [jt + i], rax
 ;    mov r9, 'x'
@@ -32,8 +53,7 @@ _start:
 ;    mov rbx, [rbx]
 ;    jmp r10
 ;    jmp rax
-    jmp [jt + i]
-    jmp _exit
+;    jmp _exit
 
 _exit:
     mov rax, 60
@@ -41,8 +61,19 @@ _exit:
     syscall
 
 _exit2:
+    jmp label
     mov rax, 60
-    mov rdi, 1
+    mov rdi, 2
+    syscall
+
+_exit3:
+    mov rax, 60
+    mov rdi, 3
+    syscall
+
+_exit4:
+    mov rax, 60
+    mov rdi, 4
     syscall
 
 

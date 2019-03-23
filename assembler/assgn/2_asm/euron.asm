@@ -6,17 +6,20 @@
 %define    second rax
 
 
+%define i r14
+
+
+
 global    euron
 extern    get_value, put_value, printf, register_dump, stack_dump
 
 section .bss
-
+    jt resq 128
 
 section .data
     basic_print db "curr = %c, iter = %ld", 10, 0  ; The printf format, "\n",'0'
     check_print db "EURON_ID_n = %ld, PROG = %s", 10, 0  ; The printf format, "\n",'0'
     number_print db "stack number: %d", 10, 0
-
 
 section .text
 euron:
@@ -27,6 +30,31 @@ euron:
     push    rbx
     push    rbp
     mov     rbp, rsp
+
+    ; JUMP_TABLE INIT
+;    mov rax, PLUS
+;    mov rcx, '+'
+;    mov [jt + rcx], rax
+;
+;    mov rax, STAR
+;    mov rcx, '*'
+;    mov [jt + rcx], rax
+
+    mov rax, MINUS
+    mov rcx, '-'
+    mov [jt + rcx*8], rax
+
+    mov rax, def
+    mov rcx, '1'
+    mov [jt + rcx*8], rax
+
+    mov rax, def
+    mov rcx, '2'
+    mov [jt + rcx*8], rax
+
+    mov rax, EURON_ID
+    mov rcx, 'n'
+    mov [jt + rcx], rax
 
     ; init
     mov    n, rdi       ; save euron's id from rdi ;;; TODO czy mogę w rdi zostawić? printf zmienia rdi, nie :C
@@ -40,6 +68,8 @@ loop:
     inc prog
     test curr, curr
     jz _exit
+    movsx i, curr
+    jmp [jt + i]
 
 PLUS:
     cmp    curr, '+'
@@ -147,11 +177,13 @@ S:
 
 
 def:
+    call sdump
     sub curr, '0'
 ;    call print_number
     movsx r13, curr
 ;    sub r13, '0' ; ASCII SHIFT
     push r13
+    call sdump
     jmp loop
 
 _exit:
