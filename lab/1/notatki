@@ -1,0 +1,35 @@
+RAX 64
+EAX 32 - końcówka RAX (zapis zeruje początkowe 32 z RAX'a)
+AX 16 - końcówka EAX (zapis nie zeruje początku EAX)
+~ aliasy na fragmenty, nie osobne tegesy
+
+
+Disassembly of section .text:
+
+0000000000000000 <ssquare>:
+   0:   48 63 c7                movsxd rax,edi
+   3:   48 0f af c0             imul   rax,rax
+   7:   c3                      ret
+
+
+1 kol : 0, 3 ,7 nr bajtów począatkowe,
+2 kol : zapis w hex'ie
+3 kol : bin -> tekstową
+
+FRSG> pamięci:
+(adresy rosną z góry do dołu)
+
+.stack - rozciąga się w dół (rośnie w dół)
+-----------         <--- RSP - stack pointer - wierzchołek stosu
+-----------
+.heap - sterta sie rozciąga w góre jęśli potrzeba
+.bss - dane wyzerowanie przy władowaniu do pamięci, też read/write
+.data - read/write
+.text - read, execute
+
+// mov eax, [eax] // odczyta wartość z adresu przechowywanego w eax i do eax zapisze tą wartość
+
+[eax] <- wartość rzeczy o adresie zapisyanym aktualnie w eax
+
+
+1.5

@@ -1,3 +1,6 @@
-# so2019
+# assembly
 
-Assignments for Operating systems course at MIM UW.
+Assembly projects:
+* attack
+* euron
+* exercises

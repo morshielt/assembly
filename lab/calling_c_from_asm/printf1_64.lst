@@ -1,0 +1,45 @@
+     1                                  ; printf1_64.asm   print an integer from storage and from a register
+     2                                  ; Assemble:	nasm -f elf64 -l printf1_64.lst  printf1_64.asm
+     3                                  ; Link:		gcc -o printf1_64  printf1_64.o
+     4                                  ; Run:		./printf1_64
+     5                                  ; Output:	a=5, rax=7
+     6                                  
+     7                                  ; Equivalent C code
+     8                                  ; /* printf1.c  print a long int, 64-bit, and an expression */
+     9                                  ; #include <stdio.h>
+    10                                  ; int main()
+    11                                  ; {
+    12                                  ;   long int a=5;
+    13                                  ;   printf("a=%ld, rax=%ld\n", a, a+2);
+    14                                  ;   return 0;
+    15                                  ; }
+    16                                  
+    17                                  ; Declare external function
+    18                                          extern	printf		; the C function, to be called
+    19                                  
+    20                                          SECTION .data		; Data section, initialized variables
+    21                                  
+    22 00000000 0500000000000000        	a:	dq	5	; long int a=5;
+    23 00000008 613D256C642C207261-     fmt:    db "a=%ld, rax=%ld", 10, 0	; The printf format, "\n",'0'
+    23 00000011 783D256C640A00     
+    24                                  
+    25                                  
+    26                                          SECTION .text           ; Code section.
+    27                                  
+    28                                          global main		; the standard gcc entry point
+    29                                  main:				; the program label for the entry point
+    30 00000000 55                              push    rbp		; set up stack frame
+    31                                  
+    32 00000001 488B0425[00000000]      	mov	rax,[a]		; put "a" from store into register
+    33 00000009 4883C002                	add	rax,2		; a+2  add constant 2
+    34 0000000D 48BF-                   	mov	rdi,fmt		; format for printf
+    34 0000000F [0800000000000000] 
+    35 00000017 488B3425[00000000]      	mov	rsi,[a]         ; first parameter for printf
+    36 0000001F 4889C2                  	mov	rdx,rax         ; second parameter for printf
+    37 00000022 B800000000              	mov	rax,0		; no xmm registers
+    38 00000027 E8(00000000)                    call    printf		; Call C function
+    39                                  
+    40 0000002C 5D                      	pop	rbp		; restore stack
+    41                                  
+    42 0000002D B800000000              	mov	rax,0		; normal, no error, return value
+    43 00000032 C3                      	ret			; return
