@@ -2,7 +2,7 @@
 MOD equ 15                             ; stack is not aligned if ((rsp + 8) % 16 != 0)
 
 %define    n r12                       ; euron's id
-%define    prog r13                    ; program
+%define    prog r13                    ; from argument
 %define    arr r14
 %define    val r15
 ;%define    jt rbx
@@ -25,10 +25,12 @@ section    .bss
 ;    JT    resq 128
     align  8
     VAL    resq (N*N)
-
-section .data
     align  8
-    ARR    times (N*N) dq -1
+    ARR    resb (N*N)
+;
+;section .data
+;    align  8
+;    ARR    times (N*N) dq -1
 
 section .text
 align 8
@@ -247,18 +249,18 @@ S:
     add    mn, n
 
     access_wait:                       ; while (arr[n][m] != -1) {}
-    cmp    qword [arr + nm*8], -1
+    cmp    byte [arr + nm], 0
     jne    access_wait
 
     pop    qword [val + nm*8]          ; val[n][m] = pop
-    mov    [arr + nm*8], m             ; arr[n][m] = m
+    mov    byte [arr + nm], 1             ; arr[n][m] = m
 
     swap_wait:                         ; while (arr[m][n] != n) {}
-    cmp    qword [arr + mn*8], n
+    cmp    byte [arr + mn], 1
     jne    swap_wait
 
     push   qword [val + mn*8]          ; push val[m][n]
-    mov    qword [arr + mn*8], -1      ; arr[m][n] = -1
+    mov    byte [arr + mn], 0      ; arr[m][n] = -1
 
     jmp    loop_start
 
@@ -269,7 +271,7 @@ def:
     jmp    loop_start
 
 _exit:
-;    call sdump
+    call sdump
     pop    rax                         ; return value from top of the stack
     mov    rsp, rbp                    ; restore register values
     pop    rbp
@@ -280,16 +282,16 @@ _exit:
     pop    r12
     ret
 
-;sdump:
-;	mov     rdi, [rsp + 8]
-;	mov     rsi, [rsp + 8 * 2]
-;	mov     rdx, [rsp + 8 * 3]
-;	mov     rcx, [rsp + 8 * 4]
-;	mov 	r8, [rsp + 8 * 5]
-;	mov	    r9, [rsp + 8 * 6]
-;	push	qword [rsp + 8 * 9]
-;	push	qword [rsp + 8 * 9]
-;	push	qword [rsp + 8 * 9]
-;    call    stack_dump
-;	add     rsp, 24         ; cleaning stack
-;	ret
+sdump:
+    mov     rdi, [rsp + 8]
+    mov     rsi, [rsp + 8 * 2]
+    mov     rdx, [rsp + 8 * 3]
+    mov     rcx, [rsp + 8 * 4]
+    mov 	r8, [rsp + 8 * 5]
+    mov	    r9, [rsp + 8 * 6]
+    push	qword [rsp + 8 * 9]
+    push	qword [rsp + 8 * 9]
+    push	qword [rsp + 8 * 9]
+    call    stack_dump
+    add     rsp, 24         ; cleaning stack
+    ret

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 make -B
-euron
+./euron
 objdump -h euron.o
 rm *.o
